@@ -1,0 +1,6 @@
+@BrainBenchmarkAPI_HostAddress = http://localhost:5090
+
+GET {{BrainBenchmarkAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
