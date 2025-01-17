@@ -16,8 +16,10 @@ namespace BrainBenchmarkAPI.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet]
-        public IActionResult Get() {
+        [HttpGet("users")]
+        public async Task<IActionResult> Get() {
+            //var user = await _dbContext.Users.ToListAsync();
+
             return Ok();
         }
     }
