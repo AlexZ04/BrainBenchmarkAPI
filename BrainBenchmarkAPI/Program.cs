@@ -1,4 +1,5 @@
 using BrainBenchmarkAPI.Data;
+using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

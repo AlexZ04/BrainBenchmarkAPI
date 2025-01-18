@@ -1,4 +1,5 @@
 ﻿using BrainBenchmarkAPI.Data;
+using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Models;
 using BrainBenchmarkAPI.Tokens;
 using Microsoft.AspNetCore.Authentication;
@@ -106,6 +107,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("Logout")]
         [Authorize]
+        [CheckTokenFilter]
         public async Task<IActionResult> Logout()
         {
             var token = HttpContext.GetTokenAsync("access_token").Result;
