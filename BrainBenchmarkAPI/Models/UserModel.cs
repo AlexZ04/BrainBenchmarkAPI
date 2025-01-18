@@ -9,6 +9,7 @@ namespace BrainBenchmarkAPI.Models
         [Required]
         [StringLength(1000, MinimumLength = 3)]
         public string Name { get; set; }
+        public Role Role { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
@@ -25,6 +26,7 @@ namespace BrainBenchmarkAPI.Models
             Birthday = user.Birthdate;
             Gender = user.Gender;
             CreateTime = user.CreateTime;
+            Role = user.Role;
         }
     }
 }

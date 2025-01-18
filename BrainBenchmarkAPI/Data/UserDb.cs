@@ -12,6 +12,7 @@ namespace BrainBenchmarkAPI.Data
         public DateTime? Birthdate { get; set; }
         public Gender Gender { get; set; }
         public DateTime CreateTime { get; set; } = DateTime.Now.ToUniversalTime();
+        public Role Role { get; set; }
 
         public UserDb() { }
 
@@ -24,6 +25,7 @@ namespace BrainBenchmarkAPI.Data
             Birthdate = user.Birthday;
             Gender = user.Gender;
             CreateTime = DateTime.Now.ToUniversalTime();
+            Role = Role.User;
         }
     }
 }

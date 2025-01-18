@@ -22,6 +22,7 @@ namespace BrainBenchmarkAPI.Controllers
             _context = dbContext;
         }
 
+
         /// <summary>
         /// Register new user
         /// </summary>
@@ -46,6 +47,7 @@ namespace BrainBenchmarkAPI.Controllers
             return Ok(new TokenResponseModel(token));
         }
 
+
         /// <summary>
         /// Login user to the system
         /// </summary>
@@ -67,6 +69,16 @@ namespace BrainBenchmarkAPI.Controllers
             return Ok(new TokenResponseModel(token));
         }
 
+
+        /// <summary>
+        /// Get user profile
+        /// </summary>
+        /// <response code="200">Returns user profile</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(UserModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpGet("profile")]
         [Authorize]
         public async Task<IActionResult> Profile()
