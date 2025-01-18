@@ -1,6 +1,7 @@
 ﻿using BrainBenchmarkAPI.Data;
 using BrainBenchmarkAPI.Models;
 using BrainBenchmarkAPI.Tokens;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -94,6 +95,27 @@ namespace BrainBenchmarkAPI.Controllers
             if (user == null) return NotFound(new ResponseModel("Error", "User not found"));
 
             return Ok(new UserModel(user));
+        }
+
+        /// <summary>
+        /// Logout from the system
+        /// </summary>
+        /// <response code="200">Successfully logout</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost("Logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            var token = HttpContext.GetTokenAsync("access_token").Result;
+
+            var blackToken = new BlacklistTokenDb(token);
+            _context.BlacklistTokens.Add(blackToken);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
