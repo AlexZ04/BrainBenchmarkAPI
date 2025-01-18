@@ -1,4 +1,5 @@
 ﻿using BrainBenchmarkAPI.Models;
+using System.Web.Helpers;
 
 namespace BrainBenchmarkAPI.Data
 {
@@ -20,7 +21,7 @@ namespace BrainBenchmarkAPI.Data
         {
             Id = Guid.NewGuid();
             Name = user.Name;
-            Password = user.Password;
+            Password = Crypto.HashPassword(user.Password);
             Email = user.Email;
             Birthdate = user.Birthday;
             Gender = user.Gender;

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using System.Web.Helpers;
 
 namespace BrainBenchmarkAPI.Controllers
 {
@@ -60,9 +61,10 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] UserLoginModel user)
         {
-            var checkUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email && u.Password == user.Password);
+            var checkUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
 
-            if (checkUser == null) return BadRequest(new ResponseModel("Error", "Invalid credentials"));
+            if (checkUser == null || !Crypto.VerifyHashedPassword(checkUser.Password, user.Password)) 
+                return BadRequest(new ResponseModel("Error", "Invalid credentials"));
 
             var token = _tokenManager.CreateTokenById(checkUser.Id);
 
