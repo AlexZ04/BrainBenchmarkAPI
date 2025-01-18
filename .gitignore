@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 BrainBenchmarkAPI/appsettings.json
 BrainBenchmarkAPI/appsettings.Development.json
+BrainBenchmarkAPI/AuthOptions.cs

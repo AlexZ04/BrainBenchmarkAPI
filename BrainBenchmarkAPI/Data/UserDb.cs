@@ -5,18 +5,15 @@ namespace BrainBenchmarkAPI.Data
     // user in database
     public class UserDb
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public DateTime? Birthdate { get; set; }
         public Gender Gender { get; set; }
-        public DateTime CreateTime { get; set; }
+        public DateTime CreateTime { get; set; } = DateTime.Now.ToUniversalTime();
 
-        public UserDb() {
-            Id = Guid.NewGuid();
-            CreateTime = DateTime.Now.ToUniversalTime();
-        }
+        public UserDb() { }
 
         public UserDb(UserRegisterModel user)
         {

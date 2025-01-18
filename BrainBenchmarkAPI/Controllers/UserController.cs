@@ -39,5 +39,24 @@ namespace BrainBenchmarkAPI.Controllers
 
             return Ok(newUser);
         }
+
+        /// <summary>
+        /// Login user to the system
+        /// </summary>
+        /// <response code="200">Returns the token of the user</response>
+        /// <response code="404">Invalid credentials (user not found)</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(TokenResponseModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] UserLoginModel user)
+        {
+            var checkUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email && u.Password == user.Password);
+
+            if (checkUser == null) return NotFound(new ResponseModel("Error", "Invalid credentials"));
+
+            return Ok(checkUser);
+        }
     }
 }
