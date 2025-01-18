@@ -20,7 +20,13 @@ namespace BrainBenchmarkAPI.Data
 
         public UserDb(UserRegisterModel user)
         {
-
+            Id = Guid.NewGuid();
+            Name = user.Name;
+            Password = user.Password;
+            Email = user.Email;
+            Birthdate = user.Birthday;
+            Gender = user.Gender;
+            CreateTime = DateTime.Now.ToUniversalTime();
         }
     }
 }
