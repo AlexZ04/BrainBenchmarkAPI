@@ -1,9 +1,12 @@
 ﻿using BrainBenchmarkAPI.Data;
 using BrainBenchmarkAPI.Models;
+using BrainBenchmarkAPI.Tokens;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 
 namespace BrainBenchmarkAPI.Controllers
 {
@@ -12,6 +15,7 @@ namespace BrainBenchmarkAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly TokenManager _tokenManager = new TokenManager();
 
         public UserController(DataContext dbContext)
         {
@@ -37,14 +41,16 @@ namespace BrainBenchmarkAPI.Controllers
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            return Ok(newUser);
+            var token = _tokenManager.CreateTokenById(newUser.Id);
+
+            return Ok(new TokenResponseModel(token));
         }
 
         /// <summary>
         /// Login user to the system
         /// </summary>
         /// <response code="200">Returns the token of the user</response>
-        /// <response code="404">Invalid credentials (user not found)</response>
+        /// <response code="400">Invalid credentials (user not found)</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(TokenResponseModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
@@ -54,9 +60,26 @@ namespace BrainBenchmarkAPI.Controllers
         {
             var checkUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email && u.Password == user.Password);
 
-            if (checkUser == null) return NotFound(new ResponseModel("Error", "Invalid credentials"));
+            if (checkUser == null) return BadRequest(new ResponseModel("Error", "Invalid credentials"));
 
-            return Ok(checkUser);
+            var token = _tokenManager.CreateTokenById(checkUser.Id);
+
+            return Ok(new TokenResponseModel(token));
+        }
+
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null) return NotFound(new ResponseModel("Error", "User not found"));
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == new Guid(userId));
+
+            if (user == null) return NotFound(new ResponseModel("Error", "User not found"));
+
+            return Ok(new UserModel(user));
         }
     }
 }
