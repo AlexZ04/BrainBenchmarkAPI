@@ -85,6 +85,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpGet("profile")]
         [Authorize]
+        [CheckTokenFilter]
         public async Task<IActionResult> Profile()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

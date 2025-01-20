@@ -7,28 +7,32 @@ namespace BrainBenchmarkAPI.Filters
 {
     public class CheckTokenFilter : Attribute, IAsyncAuthorizationFilter
     {
-        private readonly DataContext _context;
-
-        public CheckTokenFilter(DataContext context)
-        {
-            _context = context;
-        }
-
-
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context) 
         {
             var token = await context.HttpContext.GetTokenAsync("access_token");
-            //token = token.Result;
+
+            var _context = context.HttpContext.RequestServices.GetService(typeof(DataContext)) as DataContext;
+
+            if (_context == null)
+            {
+                SetError(context);
+                return;
+            }
 
             var blackToken = _context.BlacklistTokens.FirstOrDefault(t => t.Token == token);
 
             if (blackToken != null) {
-                context.Result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
-                context.Result = new UnauthorizedObjectResult(new
-                {
-                    Message = "User unauthorized!"
-                });
+                SetError(context);
             }
+        }
+
+        private void SetError(AuthorizationFilterContext context)
+        {
+            context.Result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            context.Result = new UnauthorizedObjectResult(new
+            {
+                Message = "User unauthorized!"
+            });
         }
     }
 }
