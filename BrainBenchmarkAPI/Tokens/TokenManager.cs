@@ -18,7 +18,7 @@ namespace BrainBenchmarkAPI.Tokens
                 }),
                 Issuer = AuthOptions.ISSUER,
                 Audience = AuthOptions.AUDIENCE,
-                Expires = DateTime.UtcNow.AddMinutes(60 * 24),
+                Expires = DateTime.UtcNow.AddMinutes(AuthOptions.LIFETIME_MINUTES),
                 SigningCredentials = new(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256Signature)
             };
 

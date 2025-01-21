@@ -21,7 +21,8 @@ namespace BrainBenchmarkAPI.Filters
 
             var blackToken = _context.BlacklistTokens.FirstOrDefault(t => t.Token == token);
 
-            if (blackToken != null) {
+            if (blackToken != null) 
+            {
                 SetError(context);
             }
         }
