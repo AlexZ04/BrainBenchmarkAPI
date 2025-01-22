@@ -53,7 +53,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(PlayerInfoModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
-        [HttpGet("profile")]
+        [HttpGet("profile/{id}")]
         public async Task<IActionResult> GetPlayerProfile([Required, FromQuery] Guid id)
         {
             var dbPlayer = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
