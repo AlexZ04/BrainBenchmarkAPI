@@ -20,6 +20,30 @@ namespace BrainBenchmarkAPI.Controllers
             _context = context;
         }
 
+
+        /// <summary>
+        /// Get list of all players
+        /// </summary>
+        /// <response code="200">Returns the list of all players</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(List<PlayerShortModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllPlayers()
+        {
+            var players = await _context.Users.ToListAsync();
+
+            List<PlayerShortModel> shortModels = new List<PlayerShortModel>();
+
+            foreach (var p in players)
+            {
+                shortModels.Add(new PlayerShortModel(p));
+            }
+
+            return Ok(shortModels);
+        }
+
+
         /// <summary>
         /// Get full player profile with stats
         /// </summary>

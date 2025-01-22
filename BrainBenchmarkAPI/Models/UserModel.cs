@@ -18,6 +18,7 @@ namespace BrainBenchmarkAPI.Models
         [Required]
         public Gender Gender { get; set; }
         public DateTime CreateTime { get; set; }
+        public int GamesPlayed { get; set; }
 
         public UserModel(UserDb user)
         {
@@ -27,6 +28,7 @@ namespace BrainBenchmarkAPI.Models
             Gender = user.Gender;
             CreateTime = user.CreateTime;
             Role = user.Role;
+            GamesPlayed = user.GamesPlayed;
         }
     }
 }
