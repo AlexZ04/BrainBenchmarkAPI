@@ -9,7 +9,7 @@ namespace BrainBenchmarkAPI.Data
         public DbSet<AdminDb> AdminList { get; set; }
         public DbSet<GameDb> Games { get; set; }
         public DbSet<AttemptDb> Attempts { get; set; }
-        public DbSet<SavedAttempt> SavedAttempts { get; set; }
+        public DbSet<SavedAttemptDb> SavedAttempts { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) {}
 
@@ -30,8 +30,8 @@ namespace BrainBenchmarkAPI.Data
             modelBuilder.Entity<AttemptDb>().HasKey(x => x.Id);
             modelBuilder.Entity<AttemptDb>().ToTable("attempts");
 
-            modelBuilder.Entity<SavedAttempt>().HasKey(x => x.Id);
-            modelBuilder.Entity<SavedAttempt>().ToTable("savedAttempts");
+            modelBuilder.Entity<SavedAttemptDb>().HasKey(x => x.Id);
+            modelBuilder.Entity<SavedAttemptDb>().ToTable("savedAttempts");
 
             base.OnModelCreating(modelBuilder);
         }

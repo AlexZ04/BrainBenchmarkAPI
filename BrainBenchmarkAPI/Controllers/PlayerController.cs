@@ -97,5 +97,14 @@ namespace BrainBenchmarkAPI.Controllers
 
             return Ok();
         }
+
+
+        [HttpGet("saved")]
+        [Authorize]
+        [CheckTokenFilter]
+        public async Task<IActionResult> GetSavedAttempts()
+        {
+            return Ok();
+        }
     }
 }
