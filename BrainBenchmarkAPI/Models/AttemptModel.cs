@@ -7,7 +7,7 @@ namespace BrainBenchmarkAPI.Models
         public string PlayerName { get; set; }
         public string GameName { get; set; }
         public int Result { get; set; }
-        public DateTime AttemptDate { get; set; }
+        public DateTime AttemptDate { get; set; } // attempt start time
 
         public AttemptModel(AttemptDb attempt) 
         {

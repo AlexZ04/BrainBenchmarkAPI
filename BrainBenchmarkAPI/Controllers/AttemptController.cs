@@ -163,10 +163,35 @@ namespace BrainBenchmarkAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Add attempt to db
+        /// </summary>
+        /// <param name="gameId">Id of the game</param>
+        /// <param name="playerId">Id of the player</param>
+        /// <param name="result">Result of the game</param>
+        /// <param name="date">Attempt start time</param>
+        /// <response code="201">Success</response>
+        /// <response code="404">Can't find player or game</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(List<AttemptShortModel>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpPost("attempt/game{gameId}/player{playerId}")]
-        public async Task<IActionResult> AddAttempt([Required, FromQuery] Guid gameId, [Required, FromQuery] Guid playerId)
+        public async Task<IActionResult> AddAttempt([Required, FromQuery] Guid gameId, [Required, FromQuery] Guid playerId,
+            [Required, FromQuery] int result, [Required, FromQuery] DateTime date)
         {
-            return Ok();
+            var game = await _context.Games.FindAsync(gameId);
+            var player = await _context.Users.FindAsync(playerId);
+
+            if (game == null || player == null) return NotFound(new ResponseModel("Error", "Can't find game or player"));
+
+            var attempt = new AttemptDb(player, game, result, date);
+
+            _context.Attempts.Add(attempt);
+
+            await _context.SaveChangesAsync();
+
+            return Created();
         }
     }
 }

@@ -14,13 +14,13 @@
             AttemptDate = DateTime.Now.ToUniversalTime();
         }
 
-        public AttemptDb(UserDb player, GameDb game, int result)
+        public AttemptDb(UserDb player, GameDb game, int result, DateTime date)
         {
             Id = Guid.NewGuid();
             Player = player;
             Game = game;
             Result = result;
-            AttemptDate = DateTime.Now.ToUniversalTime();
+            AttemptDate = date;
         }
     }
 }

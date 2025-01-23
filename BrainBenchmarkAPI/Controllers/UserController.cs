@@ -32,7 +32,7 @@ namespace BrainBenchmarkAPI.Controllers
         /// <response code="201">Returns the token of the newly created user</response>
         /// <response code="400">Invalid arguments</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(TokenResponseModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(TokenResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpPost("register")]
