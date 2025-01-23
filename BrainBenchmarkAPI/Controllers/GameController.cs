@@ -18,6 +18,7 @@ namespace BrainBenchmarkAPI.Controllers
             _context = context;
         }
 
+
         /// <summary>
         /// Get list of short models of all games
         /// </summary>
@@ -39,6 +40,7 @@ namespace BrainBenchmarkAPI.Controllers
 
             return Ok(games);
         }
+
 
         /// <summary>
         /// Get game model

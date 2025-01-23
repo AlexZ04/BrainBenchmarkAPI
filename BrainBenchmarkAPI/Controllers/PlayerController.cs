@@ -65,6 +65,7 @@ namespace BrainBenchmarkAPI.Controllers
             return Ok(player);
         }
 
+
         /// <summary>
         /// Change player role. If player is in the admins list, you can't downgrade him
         /// </summary>

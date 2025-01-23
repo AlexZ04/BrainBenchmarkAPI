@@ -99,6 +99,7 @@ namespace BrainBenchmarkAPI.Controllers
             return Ok(new UserModel(user));
         }
 
+
         /// <summary>
         /// Logout from the system
         /// </summary>
