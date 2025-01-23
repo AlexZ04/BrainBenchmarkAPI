@@ -3,9 +3,11 @@ using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace BrainBenchmarkAPI.Controllers
 {
@@ -73,6 +75,10 @@ namespace BrainBenchmarkAPI.Controllers
         /// <response code="403">Player is in the admins list</response>
         /// <response code="404">Can't find the player</response>
         /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpPost("admin")]
         [Authorize]
         [CheckTokenFilter]
@@ -99,12 +105,45 @@ namespace BrainBenchmarkAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Get list of short models of saved user attempts
+        /// </summary>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error with trying to find attempts</response>
+        /// <response code="404">Can't find the user</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(List<AttemptShortModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpGet("saved")]
         [Authorize]
         [CheckTokenFilter]
         public async Task<IActionResult> GetSavedAttempts()
         {
-            return Ok();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null) return NotFound(new ResponseModel("Error", "User not found"));
+
+            var id = new Guid(userId);
+
+            var attemptsId = await _context.SavedAttempts
+                .Include(at => at.Player)
+                .Where(at => at.Player.Id == id)
+                .ToListAsync();
+
+            List<AttemptShortModel> res = new List<AttemptShortModel>();
+
+            foreach (var attId in attemptsId)
+            {
+                var currentAttempt = await _context.Attempts.FindAsync(attId);
+
+                if (currentAttempt == null) return BadRequest(new ResponseModel("Error", "Error with finding attempts!"));
+
+                res.Add(new AttemptShortModel(currentAttempt));
+            }
+
+            return Ok(res);
         }
     }
 }
