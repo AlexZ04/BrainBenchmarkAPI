@@ -110,13 +110,34 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpPut("attempt/{id}")]
         public async Task<IActionResult> SaveAttempt([Required, FromQuery] Guid id)
         {
+            //var attempt = await _context.
+
             return Ok();
         }
 
 
+        /// <summary>
+        /// Remove attempt from favorites
+        /// </summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Can't find the attempt</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpDelete("attempt/{id}")]
+        [Authorize]
+        [CheckTokenFilter]
         public async Task<IActionResult> DeleteAttemptFromSaved([Required, FromQuery] Guid id)
         {
+            var attempt = await _context.Attempts.FindAsync(id);
+
+            if (attempt == null) return NotFound(new ResponseModel("Error", "Can't find the attempt"));
+
+            _context.Attempts.Remove(attempt);
+
+            await _context.SaveChangesAsync();
+
             return Ok();
         }
 
