@@ -107,10 +107,31 @@ namespace BrainBenchmarkAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Add attempt to favorites
+        /// </summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Can't find the attempt</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpPut("attempt/{id}")]
+        [Authorize]
+        [CheckTokenFilter]
         public async Task<IActionResult> SaveAttempt([Required, FromQuery] Guid id)
         {
-            //var attempt = await _context.
+            var attempt = await _context.Attempts
+                .Include(at => at.Player)
+                .FirstOrDefaultAsync(at => at.Id == id);
+
+            if (attempt == null) return NotFound(new ResponseModel("Error", "Can't find the attempt"));
+
+            var savedAttempt = new SavedAttemptDb(attempt.Id, attempt.Player);
+
+            _context.SavedAttempts.Add(savedAttempt);
+
+            await _context.SaveChangesAsync();
 
             return Ok();
         }
