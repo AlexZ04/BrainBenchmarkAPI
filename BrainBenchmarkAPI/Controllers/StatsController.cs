@@ -19,6 +19,10 @@ namespace BrainBenchmarkAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Get stats from certain player that contains his attempts couner, average attempts a day, 
+        /// favorite day of the week and favorite game
+        /// </summary>
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetPlayerStats([Required, FromQuery] Guid id)
         {
@@ -33,6 +37,9 @@ namespace BrainBenchmarkAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Get stats from certain game that contatins attempts counter and dict with game results and their percentage
+        /// </summary>
         [HttpGet("game/{id}")]
         public async Task<IActionResult> GetGameStats([Required, FromQuery] Guid id)
         {
@@ -46,6 +53,9 @@ namespace BrainBenchmarkAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get stats from certain player game stats that contains a bunch of different stats
+        /// </summary>
         [HttpGet("game{gameId}/player{playerId}")]
         public async Task<IActionResult> GetPlayerGameStats([Required, FromQuery] Guid gameId, [Required, FromQuery] Guid playerId)
         {
