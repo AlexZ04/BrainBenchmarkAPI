@@ -19,5 +19,17 @@ namespace BrainBenchmarkAPI.Data
             Id = Guid.NewGuid();
             Attempts = new List<AttemptDb>();
         }
+
+        public GameDb(string name)
+        {
+            Id = Guid.NewGuid();
+            Attempts = new List<AttemptDb>();
+            Name = name;
+            Type = GameType.ErrorAmounts;
+            Description = " ";
+            Rules = " ";
+            SecondsAmount = 0;
+            ErrorsAmount = 0;
+        }
     }
 }

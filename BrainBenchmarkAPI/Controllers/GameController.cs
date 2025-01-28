@@ -19,6 +19,18 @@ namespace BrainBenchmarkAPI.Controllers
         }
 
 
+        [HttpPut("games")]
+        public async Task<IActionResult> AddGame()
+        {
+            var game = new GameDb("Test");
+
+            _context.Games.Add(game);
+            await _context.SaveChangesAsync();
+
+            return Ok(game);
+        }
+
+
         /// <summary>
         /// Get list of short models of all games
         /// </summary>
@@ -52,7 +64,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpGet("game/{id}")]
-        public async Task<IActionResult> GetGameById([Required, FromQuery] Guid id)
+        public async Task<IActionResult> GetGameById([Required] Guid id)
         {
             var game = await _context.Games.FindAsync(id);
 

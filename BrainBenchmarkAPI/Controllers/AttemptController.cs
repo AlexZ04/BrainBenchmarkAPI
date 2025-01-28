@@ -95,7 +95,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpGet("attempt/{id}")]
-        public async Task<IActionResult> GetAttemptInfo([Required, FromQuery] Guid id)
+        public async Task<IActionResult> GetAttemptInfo([Required] Guid id)
         {
             var attempt = await _context.Attempts.FindAsync(id);
 
@@ -119,7 +119,7 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpPut("attempt/{id}")]
         [Authorize]
         [CheckTokenFilter]
-        public async Task<IActionResult> SaveAttempt([Required, FromQuery] Guid id)
+        public async Task<IActionResult> SaveAttempt([Required] Guid id)
         {
             var attempt = await _context.Attempts
                 .Include(at => at.Player)
@@ -149,7 +149,7 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpDelete("attempt/{id}")]
         [Authorize]
         [CheckTokenFilter]
-        public async Task<IActionResult> DeleteAttemptFromSaved([Required, FromQuery] Guid id)
+        public async Task<IActionResult> DeleteAttemptFromSaved([Required] Guid id)
         {
             var attempt = await _context.Attempts.FindAsync(id);
 
@@ -177,7 +177,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpPost("attempt/game{gameId}/player{playerId}")]
-        public async Task<IActionResult> AddAttempt([Required, FromQuery] Guid gameId, [Required, FromQuery] Guid playerId,
+        public async Task<IActionResult> AddAttempt([Required] Guid gameId, [Required] Guid playerId,
             [Required, FromQuery] int result, [Required, FromQuery] DateTime date)
         {
             var game = await _context.Games.FindAsync(gameId);
