@@ -85,6 +85,12 @@ namespace BrainBenchmarkAPI.Controllers
         /// <summary>
         /// Get stats from certain player game stats that contains a bunch of different stats
         /// </summary>
+        /// <response code="200">Get stats</response>
+        /// <response code="404">Can't find player or game</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(PlayerGameStatsModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpGet("game{gameId}/player{playerId}")]
         public async Task<IActionResult> GetPlayerGameStats([Required] Guid gameId, [Required] Guid playerId)
         {
@@ -92,11 +98,45 @@ namespace BrainBenchmarkAPI.Controllers
                 .Include(at => at.Game)
                 .Include(at => at.Player)
                 .Where(at => at.Game.Id == gameId && at.Player.Id == playerId)
+                .OrderByDescending(at => at.Result)
                 .ToListAsync();
 
-            int attemptsCounter = gamePlayerAttempts.Count();
+            var game = await _context.Games.FindAsync(gameId);
+            var player = await _context.Users.FindAsync(playerId);
 
-            return Ok();
+            if (game == null || player == null) return NotFound(new ResponseModel("Error", "Can't find player or game"));
+
+            int attemptsCounter = gamePlayerAttempts.Count();
+            if (attemptsCounter == 0) return Ok(new ResponseModel("Success", "User has no attempts yet"));
+
+            var allGameAttempts = _context.Attempts
+                .Include(at => at.Game)
+                .Include(at => at.Player)
+                .Where(at => at.Game.Id == gameId);
+            var averageGameRes = allGameAttempts.Average(at => at.Result);
+            var gameAttemptsCounter = allGameAttempts.Count();
+
+
+            var groupsByPlayers = allGameAttempts
+                .GroupBy(at => at.Player.Name)
+                .Select(at => new { Player = at.Key, Average = at.Average(attempt => attempt.Result) })
+                .OrderByDescending(at => at.Average);
+
+
+            allGameAttempts = allGameAttempts
+                .Where(at => at.Player.Id == playerId);
+            var averagePlayerGameRes = allGameAttempts.Average(at => at.Result);
+
+            var averagePlayerBetterThen = groupsByPlayers
+                .Where(at => at.Average < averagePlayerGameRes).Count();
+
+            int bestRes = gamePlayerAttempts[0].Result;
+
+            allGameAttempts = allGameAttempts
+                .Where(at => at.Result < bestRes);
+            var bestBetterThen = allGameAttempts.Count() /gameAttemptsCounter * 100;
+
+            return Ok(new PlayerGameStatsModel(attemptsCounter, bestRes, bestBetterThen, averagePlayerGameRes, averagePlayerBetterThen));
         }
     }
 }
