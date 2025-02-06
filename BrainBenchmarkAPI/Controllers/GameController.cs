@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BrainBenchmarkAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/games")]
     [ApiController]
     public class GameController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace BrainBenchmarkAPI.Controllers
         }
 
 
-        [HttpPut("games")]
+        [HttpPut]
         public async Task<IActionResult> AddGame()
         {
             var game = new GameDb("Test");
@@ -38,7 +38,7 @@ namespace BrainBenchmarkAPI.Controllers
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(List<GameShortModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
-        [HttpGet("games")]
+        [HttpGet]
         public async Task<IActionResult> GetAllGames()
         {
             var games = await _context.Games.ToListAsync();
@@ -63,7 +63,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(GameModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
-        [HttpGet("game/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetGameById([Required] Guid id)
         {
             var game = await _context.Games.FindAsync(id);

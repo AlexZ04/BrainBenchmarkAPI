@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace BrainBenchmarkAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/attempts")]
     [ApiController]
     public class AttemptController : ControllerBase
     {
@@ -29,7 +29,7 @@ namespace BrainBenchmarkAPI.Controllers
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(List<AttemptShortModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status200OK)]
-        [HttpGet("attempt")]
+        [HttpGet]
         public async Task<IActionResult> GetLastAttempts()
         {
             var attempts = await _context.Attempts
@@ -56,7 +56,7 @@ namespace BrainBenchmarkAPI.Controllers
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(List<AttemptShortModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status200OK)]
-        [HttpGet("attempt/user")]
+        [HttpGet("user")]
         [Authorize]
         [CheckTokenFilter]
         public async Task<IActionResult> GetUserLastAttempts()
@@ -94,7 +94,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(AttemptModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
-        [HttpGet("attempt/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetAttemptInfo([Required] Guid id)
         {
             var attempt = await _context.Attempts.FindAsync(id);
@@ -116,7 +116,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
-        [HttpPut("attempt/{id}")]
+        [HttpPut("{id}")]
         [Authorize]
         [CheckTokenFilter]
         public async Task<IActionResult> SaveAttempt([Required] Guid id)
@@ -146,7 +146,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
-        [HttpDelete("attempt/{id}")]
+        [HttpDelete("{id}")]
         [Authorize]
         [CheckTokenFilter]
         public async Task<IActionResult> DeleteAttemptFromSaved([Required] Guid id)
@@ -176,7 +176,7 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(List<AttemptShortModel>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
-        [HttpPost("attempt/game{gameId}/player{playerId}")]
+        [HttpPost("game{gameId}/player{playerId}")]
         public async Task<IActionResult> AddAttempt([Required] Guid gameId, [Required] Guid playerId,
             [Required, FromQuery] int result, [Required, FromQuery] DateTime date)
         {

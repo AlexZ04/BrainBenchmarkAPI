@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BrainBenchmarkAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/stats")]
     [ApiController]
     public class StatsController : ControllerBase
     {

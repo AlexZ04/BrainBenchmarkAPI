@@ -13,7 +13,7 @@ using System.Web.Helpers;
 
 namespace BrainBenchmarkAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -107,7 +107,7 @@ namespace BrainBenchmarkAPI.Controllers
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpPost("Logout")]
+        [HttpPost("logout")]
         [Authorize]
         [CheckTokenFilter]
         public async Task<IActionResult> Logout()

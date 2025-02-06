@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace BrainBenchmarkAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/players")]
     [ApiController]
     public class PlayerController : ControllerBase
     {
