@@ -69,9 +69,19 @@ namespace BrainBenchmarkAPI.Controllers
         /// <summary>
         /// Get stats from certain game that contatins attempts counter and dict with game results and their percentage
         /// </summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Can't find the game</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(PlayerStatsModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpGet("game/{id}")]
         public async Task<IActionResult> GetGameStats([Required] Guid id)
         {
+            var game = _context.Games.Find(id);
+
+            if (game == null) return NotFound(new ResponseModel("Error", "Can't find the game"));
+
             var gameAttempts = await _context.Attempts
                 .Include(at => at.Game)
                 .Where(at => at.Game.Id == id)
@@ -79,7 +89,21 @@ namespace BrainBenchmarkAPI.Controllers
 
             int attemptsCounter = gameAttempts.Count();
 
-            return Ok();
+            var gameResultStats = gameAttempts
+                .GroupBy(at => at.Result)
+                .Select(at => new { Res = at.Key, Percent = at.Count() / attemptsCounter })
+                .ToList();
+
+            Dictionary<int, double> results = new Dictionary<int, double>();
+            // result : result amount / allAttemptsAmount
+
+            foreach ( var stat in gameResultStats)
+            {
+                results[stat.Res] = stat.Percent;
+            }
+
+
+            return Ok(new GameStatsModel(attemptsCounter, results));
         }
 
         /// <summary>
