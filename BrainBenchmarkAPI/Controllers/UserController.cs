@@ -1,6 +1,7 @@
 ﻿using BrainBenchmarkAPI.Data;
 using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Models;
+using BrainBenchmarkAPI.Servises;
 using BrainBenchmarkAPI.Tokens;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -19,10 +20,12 @@ namespace BrainBenchmarkAPI.Controllers
     {
         private readonly DataContext _context;
         private readonly TokenManager _tokenManager = new TokenManager();
+        private readonly IUserServise _userServise;
 
-        public UserController(DataContext dbContext)
+        public UserController(DataContext dbContext, IUserServise userServise)
         {
             _context = dbContext;
+            _userServise = userServise;
         }
 
 
@@ -37,17 +40,19 @@ namespace BrainBenchmarkAPI.Controllers
         [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] UserRegisterModel user) {
-            var checkEmailUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+            //var checkEmailUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
 
-            if (checkEmailUser != null) return BadRequest(new ResponseModel("Error", "This email is already used"));
+            //if (checkEmailUser != null) return BadRequest(new ResponseModel("Error", "This email is already used"));
 
-            var newUser = new UserDb(user);
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
+            //var newUser = new UserDb(user);
+            //_context.Users.Add(newUser);
+            //await _context.SaveChangesAsync();
 
-            var token = _tokenManager.CreateTokenById(newUser.Id);
+            //var token = _tokenManager.CreateTokenById(newUser.Id);
 
-            return Ok(new TokenResponseModel(token));
+            //return Ok(new TokenResponseModel(token));
+
+            return Ok(_userServise.RegisterUser(user));
         }
 
 
