@@ -1,4 +1,6 @@
-﻿using BrainBenchmarkAPI.Models;
+﻿using BrainBenchmarkAPI.Constants;
+using BrainBenchmarkAPI.Exceptions;
+using BrainBenchmarkAPI.Models;
 using System.Net;
 using System.Text.Json;
 
@@ -21,16 +23,15 @@ namespace BrainBenchmarkAPI.Middlewares
             {
                 await _next(httpContext);
             }
-            catch (Exception ex)
+            catch (CredentialsException ex)
             {
                 await HandleExceptionAsync(httpContext,
                     ex.Message,
-                    HttpStatusCode.BadRequest,
-                    "Message");
+                    HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task HandleExceptionAsync(HttpContext context, string exMsg, HttpStatusCode httpStatusCode, string message)
+        public async Task HandleExceptionAsync(HttpContext context, string exMsg, HttpStatusCode httpStatusCode)
         {
             _logger.LogError(exMsg);
 
@@ -41,11 +42,9 @@ namespace BrainBenchmarkAPI.Middlewares
 
             ErrorModel errorModel = new ErrorModel()
             {
-                Message = message,
+                Message = exMsg,
                 StatusCode = (int)httpStatusCode
             };
-            
-            //string result = errorModel.ToString();
 
             await response.WriteAsJsonAsync(errorModel);
         }

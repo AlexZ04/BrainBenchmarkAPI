@@ -77,6 +77,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+//builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
+
 builder.Services.AddAuthorization();
 
 // allow any connection to API
