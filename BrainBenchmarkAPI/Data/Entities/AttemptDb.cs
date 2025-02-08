@@ -1,4 +1,4 @@
-﻿namespace BrainBenchmarkAPI.Data
+﻿namespace BrainBenchmarkAPI.Data.Entities
 {
     public class AttemptDb
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BrainBenchmarkAPI.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BrainBenchmarkAPI.Data
 {

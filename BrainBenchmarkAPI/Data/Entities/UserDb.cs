@@ -1,7 +1,7 @@
 ﻿using BrainBenchmarkAPI.Models;
 using System.Web.Helpers;
 
-namespace BrainBenchmarkAPI.Data
+namespace BrainBenchmarkAPI.Data.Entities
 {
     // user in database
     public class UserDb

@@ -1,7 +1,7 @@
 ﻿using BrainBenchmarkAPI.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace BrainBenchmarkAPI.Data
+namespace BrainBenchmarkAPI.Data.Entities
 {
     public class GameDb
     {
@@ -14,7 +14,7 @@ namespace BrainBenchmarkAPI.Data
         public int ErrorsAmount { get; set; }
         public List<AttemptDb> Attempts { get; set; }
 
-        public GameDb() 
+        public GameDb()
         {
             Id = Guid.NewGuid();
             Attempts = new List<AttemptDb>();

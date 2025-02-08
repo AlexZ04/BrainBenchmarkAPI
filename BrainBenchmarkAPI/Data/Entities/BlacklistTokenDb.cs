@@ -1,4 +1,4 @@
-﻿namespace BrainBenchmarkAPI.Data
+﻿namespace BrainBenchmarkAPI.Data.Entities
 {
     public class BlacklistTokenDb
     {
@@ -7,8 +7,9 @@
 
         public BlacklistTokenDb() { }
 
-        public BlacklistTokenDb(string? token) {
-            Token = token; 
+        public BlacklistTokenDb(string? token)
+        {
+            Token = token;
         }
     }
 }

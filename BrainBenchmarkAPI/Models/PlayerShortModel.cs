@@ -1,4 +1,4 @@
-﻿using BrainBenchmarkAPI.Data;
+﻿using BrainBenchmarkAPI.Data.Entities;
 
 namespace BrainBenchmarkAPI.Models
 {

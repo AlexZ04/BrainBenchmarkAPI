@@ -1,4 +1,5 @@
 ﻿using BrainBenchmarkAPI.Data;
+using BrainBenchmarkAPI.Data.Entities;
 using BrainBenchmarkAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

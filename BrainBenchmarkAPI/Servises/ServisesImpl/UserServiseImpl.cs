@@ -1,6 +1,6 @@
 ﻿using BrainBenchmarkAPI.Data;
+using BrainBenchmarkAPI.Data.Entities;
 using BrainBenchmarkAPI.Models;
-using BrainBenchmarkAPI.Tokens;
 using Microsoft.EntityFrameworkCore;
 
 namespace BrainBenchmarkAPI.Servises.ServisesImpl

@@ -1,4 +1,4 @@
-﻿using BrainBenchmarkAPI.Data;
+﻿using BrainBenchmarkAPI.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 

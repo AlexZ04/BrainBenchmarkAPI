@@ -1,4 +1,5 @@
 ﻿using BrainBenchmarkAPI.Data;
+using BrainBenchmarkAPI.Data.Entities;
 using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Models;
 using Microsoft.AspNetCore.Authorization;
