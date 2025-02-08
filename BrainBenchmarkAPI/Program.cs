@@ -3,6 +3,7 @@ using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Servises;
 using BrainBenchmarkAPI.Servises.ServisesImpl;
 using BrainBenchmarkAPI.Tokens;
+using BrainBenchmarkAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -57,7 +58,7 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(connection));
 builder.Services.AddSingleton<ITokenService, TokenServiceImpl>();
-builder.Services.AddScoped<IUserServise, UserServiseImpl>();
+builder.Services.AddTransient<IUserServise, UserServiseImpl>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -96,6 +97,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 using var serviceScope = app.Services.CreateScope();
 

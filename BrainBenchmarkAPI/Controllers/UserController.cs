@@ -53,7 +53,7 @@ namespace BrainBenchmarkAPI.Controllers
 
             //return Ok(new TokenResponseModel(token));
 
-            return Ok(_userServise.RegisterUser(user));
+            return Ok(await _userServise.RegisterUser(user));
         }
 
 
