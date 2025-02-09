@@ -26,8 +26,17 @@ namespace BrainBenchmarkAPI.Infrastructure
             {
                 problemDetails = new ProblemDetails
                 {
-                    Status = StatusCodes.Status400BadRequest,
+                    Status = credExc.Code,
                     Title = credExc.Error,
+                    Detail = exception.Message
+                };
+            }
+            else if (exception is UserNotFoundException userNotFoundExc)
+            {
+                problemDetails = new ProblemDetails
+                {
+                    Status = userNotFoundExc.Code,
+                    Title = userNotFoundExc.Error,
                     Detail = exception.Message
                 };
             }

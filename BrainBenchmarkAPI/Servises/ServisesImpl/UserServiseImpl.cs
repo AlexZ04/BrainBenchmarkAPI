@@ -25,7 +25,7 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
             var checkEmailUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
 
             if (checkEmailUser != null)
-                throw new CredentialsException(ErrorTitles.CREDENTIALS_EXCEPTION, ErrorMessages.USED_CREDENTIALS_EXCEPTION);
+                throw new CredentialsException(ErrorTitles.CREDENTIALS_EXCEPTION, ErrorMessages.USED_CREDENTIALS);
 
             var newUser = new UserDb(user);
             _context.Users.Add(newUser);
@@ -51,11 +51,13 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
         {
             var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            //if (userId == null) return NotFound(new ResponseModel("Error", "User not found"));
+            if (userId == null)
+                throw new UserNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.USER_NOT_FOUND);
 
             var userById = await _context.Users.FirstOrDefaultAsync(u => u.Id == new Guid(userId));
 
-            //if (userById == null) return NotFound(new ResponseModel("Error", "User not found"));
+            if (userById == null)
+                throw new UserNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.USER_NOT_FOUND);
 
             return new UserModel(userById);
         }
