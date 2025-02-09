@@ -25,7 +25,7 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
             var checkEmailUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
 
             if (checkEmailUser != null)
-                throw new CredentialsException(ErrorMessages.USED_CREDENTIALS_EXCEPTION);
+                throw new CredentialsException(ErrorTitles.CREDENTIALS_EXCEPTION, ErrorMessages.USED_CREDENTIALS_EXCEPTION);
 
             var newUser = new UserDb(user);
             _context.Users.Add(newUser);
@@ -41,7 +41,7 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
             var checkUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
 
             if (checkUser == null || !Crypto.VerifyHashedPassword(checkUser.Password, user.Password))
-                throw new CredentialsException(ErrorMessages.INVALID_CREDENTIALS);
+                throw new CredentialsException(ErrorTitles.CREDENTIALS_EXCEPTION, ErrorMessages.INVALID_CREDENTIALS);
 
             var token = _tokenService.CreateTokenById(checkUser.Id);
             return new TokenResponseModel(token);

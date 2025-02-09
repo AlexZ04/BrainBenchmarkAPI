@@ -3,19 +3,23 @@ using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Servises;
 using BrainBenchmarkAPI.Servises.ServisesImpl;
 using BrainBenchmarkAPI.Tokens;
-using BrainBenchmarkAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using BrainBenchmarkAPI.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // add controllers with convert enums to string
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -56,9 +60,11 @@ builder.Services.AddSwaggerGen(options =>
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
+// DI-container
 builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(connection));
-builder.Services.AddSingleton<ITokenService, TokenServiceImpl>();
+builder.Services.AddScoped<ITokenService, TokenServiceImpl>();
 builder.Services.AddTransient<IUserServise, UserServiseImpl>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -100,13 +106,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
 using var serviceScope = app.Services.CreateScope();
 
 var context = serviceScope.ServiceProvider.GetService<DataContext>();
 
 context?.Database.Migrate();
+
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 

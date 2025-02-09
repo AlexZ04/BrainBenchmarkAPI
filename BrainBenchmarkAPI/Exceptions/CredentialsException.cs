@@ -2,6 +2,12 @@
 {
     public class CredentialsException : Exception
     {
-        public CredentialsException(string message) : base(message) { }
+        public string Error { get; }
+        public string Message { get; }
+        public CredentialsException(string error, string message) : base(message) 
+        {
+            Error = error;
+            Message = message;
+        }
     }
 }
