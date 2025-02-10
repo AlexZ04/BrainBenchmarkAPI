@@ -1,14 +1,11 @@
 ﻿namespace BrainBenchmarkAPI.Exceptions
 {
-    public class CredentialsException : Exception
+    public class CredentialsException : CustomException
     {
-        public int Code { get; } = StatusCodes.Status400BadRequest;
-        public string Error { get; }
-        public string Message { get; }
-        public CredentialsException(string error, string message) : base(message) 
+        public CredentialsException(string error, string message) 
+            : base(StatusCodes.Status400BadRequest, error, message) 
         {
-            Error = error;
-            Message = message;
+
         }
     }
 }

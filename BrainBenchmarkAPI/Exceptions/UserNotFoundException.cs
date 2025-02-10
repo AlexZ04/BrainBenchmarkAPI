@@ -1,14 +1,11 @@
 ﻿namespace BrainBenchmarkAPI.Exceptions
 {
-    public class UserNotFoundException : Exception
+    public class UserNotFoundException : CustomException
     {
-        public int Code { get; } = StatusCodes.Status404NotFound;
-        public string Error { get; }
-        public string Message { get; }
-        public UserNotFoundException(string error, string message) : base(message)
+        public UserNotFoundException(string error, string message) 
+            : base(StatusCodes.Status404NotFound, error, message)
         {
-            Error = error;
-            Message = message;
+
         }
     }
 }

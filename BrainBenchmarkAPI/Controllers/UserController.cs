@@ -1,7 +1,4 @@
-﻿using BrainBenchmarkAPI.Constants;
-using BrainBenchmarkAPI.Data;
-using BrainBenchmarkAPI.Exceptions;
-using BrainBenchmarkAPI.Filters;
+﻿using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Models;
 using BrainBenchmarkAPI.Servises;
 using Microsoft.AspNetCore.Authentication;
@@ -14,12 +11,10 @@ namespace BrainBenchmarkAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly DataContext _context;
         private readonly IUserServise _userServise;
 
-        public UserController(DataContext dbContext, IUserServise userServise)
+        public UserController(IUserServise userServise)
         {
-            _context = dbContext;
             _userServise = userServise;
         }
 

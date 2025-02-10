@@ -22,21 +22,12 @@ namespace BrainBenchmarkAPI.Infrastructure
 
             ProblemDetails problemDetails;
 
-            if (exception is CredentialsException credExc)
+            if (exception is CustomException custExc)
             {
                 problemDetails = new ProblemDetails
                 {
-                    Status = credExc.Code,
-                    Title = credExc.Error,
-                    Detail = exception.Message
-                };
-            }
-            else if (exception is UserNotFoundException userNotFoundExc)
-            {
-                problemDetails = new ProblemDetails
-                {
-                    Status = userNotFoundExc.Code,
-                    Title = userNotFoundExc.Error,
+                    Status = custExc.Code,
+                    Title = custExc.Error,
                     Detail = exception.Message
                 };
             }
