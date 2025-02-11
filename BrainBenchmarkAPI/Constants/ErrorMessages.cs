@@ -6,5 +6,7 @@
         public static string USED_CREDENTIALS = "This credentials is already used!";
         public static string INVALID_CREDENTIALS = "Invalid credentials!";
         public static string USER_NOT_FOUND = "User not found";
+        public static string USER_OR_GAME_NOT_FOUND = "Can't find the game or the user!";
+        public static string USER_HAS_NO_ATTEMPS = "User has no attemps";
     }
 }

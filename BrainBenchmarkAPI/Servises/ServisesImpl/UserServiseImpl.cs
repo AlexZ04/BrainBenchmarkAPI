@@ -52,12 +52,12 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
             var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (userId == null)
-                throw new UserNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.USER_NOT_FOUND);
+                throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.USER_NOT_FOUND);
 
             var userById = await _context.Users.FirstOrDefaultAsync(u => u.Id == new Guid(userId));
 
             if (userById == null)
-                throw new UserNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.USER_NOT_FOUND);
+                throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.USER_NOT_FOUND);
 
             return new UserModel(userById);
         }

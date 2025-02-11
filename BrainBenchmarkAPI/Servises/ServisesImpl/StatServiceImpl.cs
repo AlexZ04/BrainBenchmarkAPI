@@ -1,4 +1,6 @@
-﻿using BrainBenchmarkAPI.Data;
+﻿using BrainBenchmarkAPI.Constants;
+using BrainBenchmarkAPI.Data;
+using BrainBenchmarkAPI.Exceptions;
 using BrainBenchmarkAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,11 +25,13 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
 
             var player = await _context.Users.FindAsync(id);
 
-            //if (player == null) return NotFound(new ResponseModel("Error", "Can't find the player"));
+            if (player == null)
+                throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.USER_NOT_FOUND);
 
             var attemptsCounter = playerAttempts.Count();
 
-            //if (attemptsCounter == 0) return Ok(new ResponseModel("Success", "User has no attempts yet"));
+            if (attemptsCounter == 0)
+                throw new UserHasNoAttemptsException(ErrorTitles.USER_HAS_NO_ATTEMPS_EXCEPTION, ErrorMessages.USER_HAS_NO_ATTEMPS);
 
             var averageAttemptsADay = attemptsCounter / (DateTime.Now.ToUniversalTime() - player.CreateTime).TotalDays;
 
@@ -52,7 +56,8 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
         {
             var game = _context.Games.Find(id);
 
-            //if (game == null) return NotFound(new ResponseModel("Error", "Can't find the game"));
+            if (game == null)
+                throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.GAME_NOT_FOUND);
 
             var gameAttempts = await _context.Attempts
                 .Include(at => at.Game)
@@ -90,10 +95,13 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
             var game = await _context.Games.FindAsync(gameId);
             var player = await _context.Users.FindAsync(playerId);
 
-            //if (game == null || player == null) return NotFound(new ResponseModel("Error", "Can't find player or game"));
+            if (game == null || player == null)
+                throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.USER_OR_GAME_NOT_FOUND);
 
             int attemptsCounter = gamePlayerAttempts.Count();
-            //if (attemptsCounter == 0) return Ok(new ResponseModel("Success", "User has no attempts yet"));
+
+            if (attemptsCounter == 0)
+                throw new UserHasNoAttemptsException(ErrorTitles.USER_HAS_NO_ATTEMPS_EXCEPTION, ErrorMessages.USER_HAS_NO_ATTEMPS);
 
             var allGameAttempts = _context.Attempts
                 .Include(at => at.Game)

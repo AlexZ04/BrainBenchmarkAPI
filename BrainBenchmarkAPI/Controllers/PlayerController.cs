@@ -62,7 +62,8 @@ namespace BrainBenchmarkAPI.Controllers
 
             if (dbPlayer == null) return NotFound(new ResponseModel("Error", "Wrong user id!"));
 
-            var player = new PlayerInfoModel(new UserModel(dbPlayer));
+            //var player = new PlayerInfoModel(new UserModel(dbPlayer));
+            var player = 1;
 
             return Ok(player);
         }
