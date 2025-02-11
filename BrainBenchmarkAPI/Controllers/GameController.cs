@@ -1,9 +1,6 @@
-﻿using BrainBenchmarkAPI.Data;
-using BrainBenchmarkAPI.Data.Entities;
-using BrainBenchmarkAPI.Models;
-using Microsoft.AspNetCore.Http;
+﻿using BrainBenchmarkAPI.Models;
+using BrainBenchmarkAPI.Servises;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace BrainBenchmarkAPI.Controllers
@@ -12,23 +9,11 @@ namespace BrainBenchmarkAPI.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IGameService _gameService;
 
-        public GameController(DataContext context)
+        public GameController(IGameService gameService)
         {
-            _context = context;
-        }
-
-
-        [HttpPut]
-        public async Task<IActionResult> AddGame()
-        {
-            var game = new GameDb("Test");
-
-            _context.Games.Add(game);
-            await _context.SaveChangesAsync();
-
-            return Ok(game);
+            _gameService = gameService;
         }
 
 
@@ -42,16 +27,7 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllGames()
         {
-            var games = await _context.Games.ToListAsync();
-
-            List<GameShortModel> result = new List<GameShortModel>();
-
-            foreach (var game in games)
-            {
-                result.Add(new GameShortModel(game));
-            }
-
-            return Ok(games);
+            return Ok(await _gameService.GetAllGames());
         }
 
 
@@ -67,13 +43,7 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetGameById([Required] Guid id)
         {
-            var game = await _context.Games.FindAsync(id);
-
-            if (game == null) return NotFound(new ResponseModel("Error", "Can't find game by id"));
-
-            var gameModel = new GameModel(game);
-
-            return Ok(gameModel);
+            return Ok(await _gameService.GetGameById(id));
         }
     }
 }
