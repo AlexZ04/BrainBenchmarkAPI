@@ -65,6 +65,9 @@ builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(connecti
 builder.Services.AddScoped<ITokenService, TokenServiceImpl>();
 builder.Services.AddTransient<IUserServise, UserServiseImpl>();
 builder.Services.AddTransient<IStatService, StatServiceImpl>();
+builder.Services.AddTransient<IPlayerService, PlayerServiceImpl>();
+builder.Services.AddTransient<IGameService, GameServiceImpl>();
+builder.Services.AddTransient<IAttemptService, AttemptServiceImpl>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
