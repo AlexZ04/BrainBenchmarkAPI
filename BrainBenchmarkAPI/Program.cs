@@ -64,6 +64,7 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(connection));
 builder.Services.AddScoped<ITokenService, TokenServiceImpl>();
 builder.Services.AddTransient<IUserServise, UserServiseImpl>();
+builder.Services.AddTransient<IStatService, StatServiceImpl>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
