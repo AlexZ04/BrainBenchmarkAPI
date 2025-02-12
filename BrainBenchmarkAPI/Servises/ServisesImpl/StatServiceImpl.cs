@@ -35,13 +35,12 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
 
             var averageAttemptsADay = attemptsCounter / (DateTime.Now.ToUniversalTime() - player.CreateTime).TotalDays;
 
-            var groupsByDayOfTheWeek = playerAttempts
-                .GroupBy(at => (int)at.AttemptDate.DayOfWeek)
-                .Select(at => new { Day = at.Key, Count = at.Count() })
-                .OrderByDescending(at => at.Count).ToList();
+            var popularDayGroup = playerAttempts
+                .GroupBy(a => (int)a.AttemptDate.DayOfWeek)
+                .OrderByDescending(g => g.Count())
+                .First();
 
-            var mostPopularDay = groupsByDayOfTheWeek[0].Day;
-            DayOfTheWeek day = (DayOfTheWeek)Enum.GetValues<DayOfTheWeek>().GetValue(mostPopularDay - 1);
+            var day = (DayOfTheWeek)popularDayGroup.Key;
 
             var groupsByGames = playerAttempts
                 .GroupBy(at => at.Game.Name)
@@ -54,7 +53,7 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
 
         public async Task<GameStatsModel> GetGameStats(Guid id)
         {
-            var game = _context.Games.Find(id);
+            var game = await _context.Games.FindAsync(id);
 
             if (game == null)
                 throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.GAME_NOT_FOUND);
@@ -71,14 +70,14 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
                 .Select(at => new { Res = at.Key, Percent = at.Count() / attemptsCounter })
                 .ToList();
 
-            Dictionary<int, double> results = new Dictionary<int, double>();
             // result : result amount / allAttemptsAmount
 
-            foreach (var stat in gameResultStats)
-            {
-                results[stat.Res] = stat.Percent;
-            }
-
+            Dictionary<int, double> results = gameAttempts
+                .GroupBy(a => a.Result)
+                .ToDictionary(
+                    g => g.Key,
+                    g => (double)g.Count() / attemptsCounter
+                );
 
             return new GameStatsModel(attemptsCounter, results);
         }
@@ -124,7 +123,7 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
             var averagePlayerBetterThen = groupsByPlayers
                 .Where(at => at.Average < averagePlayerGameRes).Count();
 
-            int bestRes = gamePlayerAttempts[0].Result;
+            int bestRes = gamePlayerAttempts.First().Result;
 
             allGameAttempts = allGameAttempts
                 .Where(at => at.Result < bestRes);

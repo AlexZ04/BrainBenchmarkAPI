@@ -1,13 +1,9 @@
-﻿using BrainBenchmarkAPI.Data;
-using BrainBenchmarkAPI.Data.Entities;
-using BrainBenchmarkAPI.Filters;
+﻿using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Models;
 using BrainBenchmarkAPI.Servises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 
 namespace BrainBenchmarkAPI.Controllers
 {

@@ -1,5 +1,4 @@
 using BrainBenchmarkAPI.Data;
-using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Servises;
 using BrainBenchmarkAPI.Servises.ServisesImpl;
 using BrainBenchmarkAPI.Tokens;

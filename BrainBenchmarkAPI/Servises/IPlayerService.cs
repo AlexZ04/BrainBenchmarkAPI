@@ -1,5 +1,4 @@
 ﻿using BrainBenchmarkAPI.Models;
-using System.Security.Claims;
 
 namespace BrainBenchmarkAPI.Servises
 {
