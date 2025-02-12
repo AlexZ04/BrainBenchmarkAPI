@@ -132,7 +132,17 @@ namespace BrainBenchmarkAPI.Controllers
             return Created();
         }
 
-
+        /// <summary>
+        /// Get list of short models of saved user attempts
+        /// </summary>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error with trying to find attempts</response>
+        /// <response code="404">Can't find the user</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(List<AttemptShortModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
         [HttpGet("saved")]
         [Authorize]
         [CheckTokenFilter]

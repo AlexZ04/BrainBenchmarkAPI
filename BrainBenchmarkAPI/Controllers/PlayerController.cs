@@ -1,6 +1,7 @@
 ﻿using BrainBenchmarkAPI.Data;
 using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Models;
+using BrainBenchmarkAPI.Servises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,11 +16,11 @@ namespace BrainBenchmarkAPI.Controllers
     [ApiController]
     public class PlayerController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IPlayerService _playerService;
 
-        public PlayerController(DataContext context)
+        public PlayerController(IPlayerService playerService)
         {
-            _context = context;
+            _playerService = playerService;
         }
 
 
@@ -33,16 +34,7 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAllPlayers()
         {
-            var players = await _context.Users.ToListAsync();
-
-            List<PlayerShortModel> shortModels = new List<PlayerShortModel>();
-
-            foreach (var p in players)
-            {
-                shortModels.Add(new PlayerShortModel(p));
-            }
-
-            return Ok(shortModels);
+            return Ok(await _playerService.GetAllPlayers());
         }
 
 
@@ -58,14 +50,7 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpGet("profile/{id}")]
         public async Task<IActionResult> GetPlayerProfile([Required] Guid id)
         {
-            var dbPlayer = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (dbPlayer == null) return NotFound(new ResponseModel("Error", "Wrong user id!"));
-
-            //var player = new PlayerInfoModel(new UserModel(dbPlayer));
-            var player = 1;
-
-            return Ok(player);
+            return Ok(await _playerService.GetPlayerProfile(id));
         }
 
 
@@ -86,65 +71,9 @@ namespace BrainBenchmarkAPI.Controllers
         [CheckAdminRoleFilter]
         public async Task<IActionResult> ChangeUserRole([Required, FromQuery] Guid id)
         {
-            var dbPlayer = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (dbPlayer == null) return NotFound(new ResponseModel("Error", "Wrong user id!"));
-
-            if (dbPlayer.Role == Role.User) dbPlayer.Role = Role.Admin;
-            else
-            {
-                var admin = await _context.AdminList.FirstOrDefaultAsync(x => x.Id == id);
-
-                if (admin != null) return Forbid("You can't downgrade this user!");
-
-                dbPlayer.Role = Role.User;
-            }
-
-            await _context.SaveChangesAsync();
+            await _playerService.ChangeUserRole(id);
 
             return Ok();
-        }
-
-
-        /// <summary>
-        /// Get list of short models of saved user attempts
-        /// </summary>
-        /// <response code="200">Success</response>
-        /// <response code="400">Error with trying to find attempts</response>
-        /// <response code="404">Can't find the user</response>
-        /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(List<AttemptShortModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ResponseModel), StatusCodes.Status500InternalServerError)]
-        [HttpGet("saved")]
-        [Authorize]
-        [CheckTokenFilter]
-        public async Task<IActionResult> GetSavedAttempts()
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId == null) return NotFound(new ResponseModel("Error", "User not found"));
-
-            var id = new Guid(userId);
-
-            var attemptsId = await _context.SavedAttempts
-                .Include(at => at.Player)
-                .Where(at => at.Player.Id == id)
-                .ToListAsync();
-
-            List<AttemptShortModel> res = new List<AttemptShortModel>();
-
-            foreach (var attId in attemptsId)
-            {
-                var currentAttempt = await _context.Attempts.FindAsync(attId);
-
-                if (currentAttempt == null) return BadRequest(new ResponseModel("Error", "Error with finding attempts!"));
-
-                res.Add(new AttemptShortModel(currentAttempt));
-            }
-
-            return Ok(res);
         }
     }
 }

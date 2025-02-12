@@ -12,5 +12,6 @@
         public static string ATTEMPT_IS_ALREADY_SAVED = "This attempt is already saved";
         public static string ATTEMPT_IS_NOT_SAVED = "This attempts is not in the saved list";
         public static string ACTION_WITH_OTHER_USER_ATTEMPT = "You can only perform actions with YOUR attemps";
+        public static string DOWNGRADE_USER = "You can't downgrade this user!";
     }
 }
