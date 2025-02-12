@@ -2,8 +2,8 @@
 using BrainBenchmarkAPI.Data.Entities;
 using BrainBenchmarkAPI.Filters;
 using BrainBenchmarkAPI.Models;
+using BrainBenchmarkAPI.Servises;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -15,11 +15,11 @@ namespace BrainBenchmarkAPI.Controllers
     [ApiController]
     public class AttemptController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IAttemptService _attemptService;
 
-        public AttemptController(DataContext context)
+        public AttemptController(IAttemptService attemptService)
         {
-            _context = context;
+            _attemptService = attemptService;
         }
 
 
@@ -33,19 +33,7 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetLastAttempts()
         {
-            var attempts = await _context.Attempts
-                .OrderByDescending(at => at.AttemptDate)
-                .Take(10)
-                .ToListAsync();
-
-            List<AttemptShortModel> res = new List<AttemptShortModel>();
-
-            foreach (var attempt in attempts)
-            {
-                res.Add(new AttemptShortModel(attempt));
-            }
-
-            return Ok(res);
+            return Ok(await _attemptService.GetLastAttempts());
         }
 
 
@@ -62,27 +50,7 @@ namespace BrainBenchmarkAPI.Controllers
         [CheckTokenFilter]
         public async Task<IActionResult> GetUserLastAttempts()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId == null) return NotFound(new ResponseModel("Error", "User not found"));
-
-            var id = new Guid(userId);
-
-            var attempts = await _context.Attempts
-                .Include(at => at.Player)
-                .OrderByDescending(at => at.AttemptDate)
-                .Where(at => at.Player.Id == id)
-                .Take(10)
-                .ToListAsync();
-
-            List<AttemptShortModel> res = new List<AttemptShortModel>();
-
-            foreach (var attempt in attempts)
-            {
-                res.Add(new AttemptShortModel(attempt));
-            }
-
-            return Ok(res);
+            return Ok(await _attemptService.GetUserLastAttempts(User));
         }
 
 
@@ -98,13 +66,7 @@ namespace BrainBenchmarkAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAttemptInfo([Required] Guid id)
         {
-            var attempt = await _context.Attempts.FindAsync(id);
-
-            if (attempt == null) return NotFound(new ResponseModel("Error", "Can't find the attempt"));
-
-            var resAttempt = new AttemptModel(attempt);
-
-            return Ok(resAttempt);
+            return Ok(await _attemptService.GetAttemptInfo(id));
         }
 
 
@@ -122,17 +84,7 @@ namespace BrainBenchmarkAPI.Controllers
         [CheckTokenFilter]
         public async Task<IActionResult> SaveAttempt([Required] Guid id)
         {
-            var attempt = await _context.Attempts
-                .Include(at => at.Player)
-                .FirstOrDefaultAsync(at => at.Id == id);
-
-            if (attempt == null) return NotFound(new ResponseModel("Error", "Can't find the attempt"));
-
-            var savedAttempt = new SavedAttemptDb(attempt.Id, attempt.Player);
-
-            _context.SavedAttempts.Add(savedAttempt);
-
-            await _context.SaveChangesAsync();
+            await _attemptService.SaveAttempt(id, User);
 
             return Ok();
         }
@@ -152,13 +104,7 @@ namespace BrainBenchmarkAPI.Controllers
         [CheckTokenFilter]
         public async Task<IActionResult> DeleteAttemptFromSaved([Required] Guid id)
         {
-            var attempt = await _context.Attempts.FindAsync(id);
-
-            if (attempt == null) return NotFound(new ResponseModel("Error", "Can't find the attempt"));
-
-            _context.Attempts.Remove(attempt);
-
-            await _context.SaveChangesAsync();
+            await _attemptService.DeleteAttemptFromSaved(id, User);
 
             return Ok();
         }
@@ -181,16 +127,7 @@ namespace BrainBenchmarkAPI.Controllers
         public async Task<IActionResult> AddAttempt([Required] Guid gameId, [Required] Guid playerId,
             [Required, FromQuery] int result, [Required, FromQuery] DateTime date)
         {
-            var game = await _context.Games.FindAsync(gameId);
-            var player = await _context.Users.FindAsync(playerId);
-
-            if (game == null || player == null) return NotFound(new ResponseModel("Error", "Can't find game or player"));
-
-            var attempt = new AttemptDb(player, game, result, date);
-
-            _context.Attempts.Add(attempt);
-
-            await _context.SaveChangesAsync();
+            await _attemptService.AddAttempt(gameId, playerId, result, date);
 
             return Created();
         }
@@ -201,7 +138,7 @@ namespace BrainBenchmarkAPI.Controllers
         [CheckTokenFilter]
         public async Task<IActionResult> GetSavedAttempts()
         {
-            return Ok();
+            return Ok(await _attemptService.GetSavedAttempts(User));
         }
     }
 }
