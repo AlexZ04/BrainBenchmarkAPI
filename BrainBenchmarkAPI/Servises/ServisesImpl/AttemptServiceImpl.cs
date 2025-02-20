@@ -20,6 +20,7 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
         public async Task<List<AttemptShortModel>> GetLastAttempts()
         {
             var attempts = await _context.Attempts
+                .Include(at => at.Game)
                 .OrderByDescending(at => at.AttemptDate)
                 .Take(10)
                 .ToListAsync();
@@ -45,6 +46,7 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
 
             var attempts = await _context.Attempts
                 .Include(at => at.Player)
+                .Include(at => at.Game)
                 .OrderByDescending(at => at.AttemptDate)
                 .Where(at => at.Player.Id == id)
                 .Take(10)
@@ -62,7 +64,10 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
 
         public async Task<AttemptModel> GetAttemptInfo(Guid id)
         {
-            var attempt = await _context.Attempts.FindAsync(id);
+            var attempt = await _context.Attempts
+                .Include(at => at.Game)
+                .Include(at => at.Player)
+                .FirstOrDefaultAsync(at => at.Id == id);
 
             if (attempt == null)
                 throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.ATTEMPT_NOT_FOUND);
@@ -98,7 +103,9 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
 
         public async Task DeleteAttemptFromSaved(Guid id, ClaimsPrincipal user)
         {
-            var attempt = await _context.SavedAttempts.FindAsync(id);
+            var attempt = await _context.SavedAttempts
+                .Include(at => at.Player)
+                .FirstOrDefaultAsync(at => at.Id == id);
 
             if (attempt == null)
                 throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.ATTEMPT_NOT_FOUND);
@@ -139,7 +146,9 @@ namespace BrainBenchmarkAPI.Servises.ServisesImpl
             
             foreach (var attempt in savedAttempts)
             {
-                var fullAttemptModel = await _context.Attempts.FindAsync(attempt.Id);
+                var fullAttemptModel = await _context.Attempts
+                    .Include(at => at.Game)
+                    .FirstOrDefaultAsync(at => at.Id == attempt.Id);
 
                 if (fullAttemptModel == null)
                     throw new SmthNotFoundException(ErrorTitles.NOT_FOUND_EXCEPTION, ErrorMessages.ATTEMPT_NOT_FOUND);
